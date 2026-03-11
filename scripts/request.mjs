@@ -55,9 +55,64 @@ function isPlaceholderValue(value) {
   return value.includes('<') || value.includes('>');
 }
 
+function assertSafeEndpoint(endpoint) {
+  let url;
+  try {
+    url = new URL(endpoint);
+  } catch {
+    throw new Error(`Invalid endpoint URL: ${endpoint}`);
+  }
+
+  // Only allow HTTPS
+  if (url.protocol !== 'https:') {
+    throw new Error('Endpoint must use https');
+  }
+
+  const host = url.hostname.toLowerCase();
+
+  // Disallow raw IP endpoints (common exfiltration pattern)
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host)) {
+    throw new Error('Endpoint must be a domain name (IP endpoints are not allowed)');
+  }
+
+  // Allowlist known datatk domains. Adjust here if you use a private gateway.
+  const allowedHosts = new Set([
+    'quote.datatk.com',
+    'www.datatk.com',
+  ]);
+
+  const allowedSuffixes = ['.datatk.com'];
+
+  const isAllowed =
+    allowedHosts.has(host) || allowedSuffixes.some((suffix) => host.endsWith(suffix));
+
+  if (!isAllowed) {
+    throw new Error(
+      `Endpoint host not allowlisted: ${host}. Edit scripts/request.mjs allowlist if you use a private gateway.`
+    );
+  }
+
+  return url;
+}
+
+function assertSafePath(path) {
+  if (!path || typeof path !== 'string') {
+    throw new Error('Missing request path');
+  }
+  if (!path.startsWith('/Api/')) {
+    throw new Error('Path must start with /Api/');
+  }
+  if (path.includes('..')) {
+    throw new Error('Path must not include ..');
+  }
+}
+
 export async function postJson({ endpoint, ak, path, body }) {
   const normalizedEndpoint = trimTrailingSlash(endpoint);
-  const url = `${normalizedEndpoint}${path}`;
+  const safeEndpointUrl = assertSafeEndpoint(normalizedEndpoint);
+  assertSafePath(path);
+
+  const url = `${safeEndpointUrl.origin}${path}`;
 
   const resp = await fetch(url, {
     method: 'POST',

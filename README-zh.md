@@ -26,16 +26,24 @@
 
 ## 配置
 
-编辑项目根目录下的 `env.json`，将真实的接入地址和密钥填入：
+1）复制示例配置文件：
+
+```bash
+cp env.json.example env.json
+```
+
+2）编辑项目根目录下的 `env.json`，将真实的接入地址和密钥填入：
 
 ```json
 {
-  "endpoint": "https://你的接入地址",
-  "apiKey":   "你的API Key"
+  "endpoint": "https://quote.datatk.com",
+  "apiKey": "<你的API Key>"
 }
 ```
 
-> `endpoint` 末尾的斜杠会被自动去除，无需手动处理。
+说明：
+- `env.json` 已在 `.gitignore` 中忽略，**不要把真实 API Key 提交到仓库**。
+- `endpoint` 末尾的斜杠会被自动去除。
 
 ---
 
@@ -49,6 +57,19 @@ node scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"
 
 成功时，脚本会将原始 JSON 响应打印到标准输出。  
 请求失败时（HTTP 状态码非 `200`），脚本会打印状态码和错误信息后退出。
+
+---
+
+## 安全说明
+
+该技能会携带 API Key 向 QuoteNode REST 发起 HTTPS 请求。为降低被误用为“任意外连/外传工具”的风险，`scripts/request.mjs` 内置了安全约束：
+
+- 仅允许 HTTPS endpoint
+- endpoint 域名白名单（默认仅允许 `*.datatk.com`）
+- path 必须以 `/Api/` 开头
+- 禁止使用 IP 形式的 endpoint
+
+如你使用的是私有网关域名，请在 `scripts/request.mjs` 中调整 allowlist。
 
 ---
 

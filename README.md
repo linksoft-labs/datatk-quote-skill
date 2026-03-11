@@ -26,16 +26,24 @@ A market data query skill powered by the [dataTrack](https://www.datatk.com) Quo
 
 ## Configuration
 
-Edit `env.json` in the project root and fill in your endpoint and key:
+1) Copy the example config file:
+
+```bash
+cp env.json.example env.json
+```
+
+2) Edit `env.json` in the project root and fill in your endpoint and key:
 
 ```json
 {
-  "endpoint": "https://your-endpoint",
-  "apiKey":   "your-api-key"
+  "endpoint": "https://quote.datatk.com",
+  "apiKey": "<YOUR_API_KEY>"
 }
 ```
 
-> Trailing slashes in `endpoint` are stripped automatically.
+Notes:
+- `env.json` is ignored by git (see `.gitignore`). **Do not commit real API keys.**
+- Trailing slashes in `endpoint` are stripped automatically.
 
 ---
 
@@ -49,6 +57,20 @@ node scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"
 
 On success, the script prints the raw JSON response to stdout.  
 On failure (HTTP status other than `200`), it prints the status code and error body, then exits.
+
+---
+
+## Security Notes
+
+This skill makes outbound HTTPS requests to QuoteNode REST endpoints and uses an API key.
+To reduce the risk of accidental data exfiltration, `scripts/request.mjs` enforces:
+
+- HTTPS-only endpoints
+- Domain allowlist (default: `*.datatk.com`)
+- Request path must start with `/Api/`
+- IP endpoints are rejected
+
+If you use a private gateway domain, update the allowlist inside `scripts/request.mjs`.
 
 ---
 
