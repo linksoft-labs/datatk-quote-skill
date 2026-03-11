@@ -49,7 +49,7 @@ cp env.example.json env.json
 
 ## 快速开始
 
-所有请求使用统一的脚本 `scripts/request.mjs`，通过 `--path` 指定接口路径，通过 `--body` 传入 JSON 请求体：
+所有请求使用统一的脚本 `scripts/request.mjs`，通过 `--path` 指定接口路径（为安全起见已做白名单限制），通过 `--body` 传入 JSON 请求体：
 
 ```bash
 node scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"US|AAPL","lang":"en"}'

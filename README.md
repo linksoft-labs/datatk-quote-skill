@@ -49,7 +49,7 @@ Notes:
 
 ## Quick Start
 
-All requests go through the unified script `scripts/request.mjs`. Use `--path` for the API path and `--body` for the JSON request body:
+All requests go through the unified script `scripts/request.mjs`. Use `--path` for the API path (allowlisted for safety) and `--body` for the JSON request body:
 
 ```bash
 node scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"US|AAPL","lang":"en"}'

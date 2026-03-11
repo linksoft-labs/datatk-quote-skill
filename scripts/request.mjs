@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -95,15 +93,29 @@ function assertSafeEndpoint(endpoint) {
   return url;
 }
 
+const ALLOWED_PATHS = new Set([
+  '/Api/V1/Quotation/Detail',
+  '/Api/V1/Basic/BasicInfo',
+  '/Api/V1/Quotation/Tick',
+  '/Api/V1/Quotation/DepthQuoteL2',
+  '/Api/V1/History/TimeLine',
+  '/Api/V1/History/KLine',
+  '/Api/V1/Quotation/Brokers',
+  '/Api/V1/Quotation/Broker',
+  '/Api/V1/Basic/Holiday',
+]);
+
 function assertSafePath(path) {
   if (!path || typeof path !== 'string') {
     throw new Error('Missing request path');
   }
-  if (!path.startsWith('/Api/')) {
-    throw new Error('Path must start with /Api/');
-  }
   if (path.includes('..')) {
     throw new Error('Path must not include ..');
+  }
+  if (!ALLOWED_PATHS.has(path)) {
+    throw new Error(
+      `Path not allowlisted: ${path}. Allowed paths: ${Array.from(ALLOWED_PATHS).join(', ')}`
+    );
   }
 }
 
