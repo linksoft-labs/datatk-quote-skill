@@ -1,6 +1,6 @@
 ---
 name: datatk-quote-skill
-description: Stock market quote lookup and integration skill. Use when selecting QuoteNode REST endpoints, building request payloads, interpreting response fields, checking market codes or error codes, and sending stock or related market data requests through the bundled JavaScript script.
+description: Real-time stock market data via QuoteNode API. Query quotes, K-lines, tick trades, Level-2 depth, and trading calendars for US/HK/CN markets.
 ---
 
 # QuoteNode REST
