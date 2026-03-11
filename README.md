@@ -29,7 +29,7 @@ A market data query skill powered by the [dataTrack](https://www.datatk.com) Quo
 1) Copy the example config file:
 
 ```bash
-cp env.json.example env.json
+cp env.example.json env.json
 ```
 
 2) Edit `env.json` in the project root and fill in your endpoint and key:

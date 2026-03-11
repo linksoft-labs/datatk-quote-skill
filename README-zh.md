@@ -29,7 +29,7 @@
 1）复制示例配置文件：
 
 ```bash
-cp env.json.example env.json
+cp env.example.json env.json
 ```
 
 2）编辑项目根目录下的 `env.json`，将真实的接入地址和密钥填入：
