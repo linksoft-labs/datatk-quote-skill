@@ -19,8 +19,10 @@ For background, read:
 ## Quick Start
 
 ```bash
-Edit {baseDir}/env.json and fill in endpoint and apiKey
+# copy example env file, then edit env.json to add your endpoint and apiKey
+cp {baseDir}/env.json.example {baseDir}/env.json
 
+# test with a sample request
 node {baseDir}/scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"US|AAPL","lang":"en"}'
 ```
 
