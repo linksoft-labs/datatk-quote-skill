@@ -1,92 +1,92 @@
 # datatk-quote-skill
 
-基于 [dataTrack](https://www.datatk.com) QuoteNode REST API 的行情查询技能，支持股票、期货、外汇等多市场实时和历史数据查询。
+A market data query skill powered by the [dataTrack](https://www.datatk.com) QuoteNode REST API, supporting real-time and historical data across stocks, futures, forex, and more.
 
 ---
 
-## 目录
+## Table of Contents
 
-- [前置条件](#前置条件)
-- [配置](#配置)
-- [快速开始](#快速开始)
-- [接口一览](#接口一览)
-- [命令行使用示例](#命令行使用示例)
-- [市场代码](#市场代码)
-- [错误处理](#错误处理)
-- [参考文档](#参考文档)
-
----
-
-## 前置条件
-
-1. 安装 **Node.js 18+**（脚本使用原生 `fetch`，无需额外依赖）。
-2. 前往 [dataTrack 服务页面](https://www.datatk.com/service) 获取你的 **Endpoint** 和 **API Key**。
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+- [Quick Start](#quick-start)
+- [Endpoint Overview](#endpoint-overview)
+- [Usage Examples](#usage-examples)
+- [Market Codes](#market-codes)
+- [Error Handling](#error-handling)
+- [Reference Docs](#reference-docs)
 
 ---
 
-## 配置
+## Prerequisites
 
-编辑项目根目录下的 `env.json`，将真实的接入地址和密钥填入：
+1. Install **Node.js 18+** (the script uses the built-in `fetch` — no extra dependencies needed).
+2. Go to the [dataTrack service page](https://www.datatk.com/service) to obtain your **Endpoint** and **API Key**.
+
+---
+
+## Configuration
+
+Edit `env.json` in the project root and fill in your endpoint and key:
 
 ```json
 {
-  "endpoint": "https://你的接入地址",
-  "apiKey":   "你的API Key"
+  "endpoint": "https://your-endpoint",
+  "apiKey":   "your-api-key"
 }
 ```
 
-> `endpoint` 末尾的斜杠会被自动去除，无需手动处理。
+> Trailing slashes in `endpoint` are stripped automatically.
 
 ---
 
-## 快速开始
+## Quick Start
 
-所有请求使用统一的脚本 `scripts/request.mjs`，通过 `--path` 指定接口路径，通过 `--body` 传入 JSON 请求体：
+All requests go through the unified script `scripts/request.mjs`. Use `--path` for the API path and `--body` for the JSON request body:
 
 ```bash
 node scripts/request.mjs --path /Api/V1/Quotation/Detail --body '{"instrument":"US|AAPL","lang":"en"}'
 ```
 
-成功时，脚本会将原始 JSON 响应打印到标准输出。  
-请求失败时（HTTP 状态码非 `200`），脚本会打印状态码和错误信息后退出。
+On success, the script prints the raw JSON response to stdout.  
+On failure (HTTP status other than `200`), it prints the status code and error body, then exits.
 
 ---
 
-## 接口一览
+## Endpoint Overview
 
-| 功能 | 路径 |
+| Feature | Path |
 | --- | --- |
-| 证券详情 | `/Api/V1/Quotation/Detail` |
-| 证券列表 | `/Api/V1/Basic/BasicInfo` |
-| 逐笔成交 | `/Api/V1/Quotation/Tick` |
-| Level-2 买卖盘 | `/Api/V1/Quotation/DepthQuoteL2` |
-| 分时图 | `/Api/V1/History/TimeLine` |
-| K 线 | `/Api/V1/History/KLine` |
-| 经纪商列表 | `/Api/V1/Quotation/Brokers` |
-| 经纪商队列 | `/Api/V1/Quotation/Broker` |
-| 交易日历 | `/Api/V1/Basic/Holiday` |
+| Security Detail | `/Api/V1/Quotation/Detail` |
+| Instrument List | `/Api/V1/Basic/BasicInfo` |
+| Tick Trades | `/Api/V1/Quotation/Tick` |
+| Level-2 Depth | `/Api/V1/Quotation/DepthQuoteL2` |
+| TimeLine | `/Api/V1/History/TimeLine` |
+| KLine | `/Api/V1/History/KLine` |
+| Broker List | `/Api/V1/Quotation/Brokers` |
+| Broker Queue | `/Api/V1/Quotation/Broker` |
+| Trading Calendar | `/Api/V1/Basic/Holiday` |
 
 ---
 
-## 命令行使用示例
+## Usage Examples
 
-### 查询美股实时行情（苹果）
+### Get US stock quote (Apple)
 
 ```bash
 node scripts/request.mjs \
   --path /Api/V1/Quotation/Detail \
-  --body '{"instrument":"US|AAPL","lang":"zh-CN"}'
+  --body '{"instrument":"US|AAPL","lang":"en"}'
 ```
 
-### 查询港股列表（第 1 页，每页 50 条）
+### Get Hong Kong stock list (page 1, 50 per page)
 
 ```bash
 node scripts/request.mjs \
   --path /Api/V1/Basic/BasicInfo \
-  --body '{"instrument":"HKEX|1","page":1,"pageSize":50,"lang":"zh-CN"}'
+  --body '{"instrument":"HKEX|1","page":1,"pageSize":50,"lang":"en"}'
 ```
 
-### 查询腾讯日 K 线（前复权）
+### Get Tencent daily KLine (forward-adjusted)
 
 ```bash
 node scripts/request.mjs \
@@ -94,7 +94,7 @@ node scripts/request.mjs \
   --body '{"instrument":"HKEX|00700","period":"day","right":1}'
 ```
 
-### 查询港股 Level-2 买卖盘（5 档）
+### Get Level-2 depth for a HK stock (5 levels)
 
 ```bash
 node scripts/request.mjs \
@@ -102,15 +102,15 @@ node scripts/request.mjs \
   --body '{"instrument":"HKEX|00700|R","depth":5}'
 ```
 
-### 查询港股交易日历
+### Get Hong Kong trading calendar
 
 ```bash
 node scripts/request.mjs \
   --path /Api/V1/Basic/Holiday \
-  --body '{"market":"HKEX","startDate":"2025-01-01","endDate":"2025-12-31","lang":"zh-CN"}'
+  --body '{"market":"HKEX","startDate":"2025-01-01","endDate":"2025-12-31","lang":"en"}'
 ```
 
-### 查询逐笔成交
+### Get tick trades
 
 ```bash
 node scripts/request.mjs \
@@ -120,57 +120,57 @@ node scripts/request.mjs \
 
 ---
 
-## 市场代码
+## Market Codes
 
-### 股票市场
+### Stock Markets
 
-| 代码 | 说明 |
+| Code | Description |
 | --- | --- |
-| `SSE` | 上海证券交易所 |
-| `SZSE` | 深圳证券交易所 |
-| `HKEX` | 香港交易所 |
-| `US` | 美国股市 |
+| `SSE` | Shanghai Stock Exchange |
+| `SZSE` | Shenzhen Stock Exchange |
+| `HKEX` | Hong Kong Exchanges and Clearing |
+| `US` | US stock market |
 
-### 期货市场（部分）
+### Futures Markets (partial)
 
-| 代码 | 说明 |
+| Code | Description |
 | --- | --- |
-| `SHFE` | 上海期货交易所 |
-| `CFFEX` | 中国金融期货交易所 |
-| `COMEX` | 纽约商品交易所 |
-| `CME` | 芝加哥商业交易所 |
+| `SHFE` | Shanghai Futures Exchange |
+| `CFFEX` | China Financial Futures Exchange |
+| `COMEX` | Commodity Exchange, Inc. |
+| `CME` | Chicago Mercantile Exchange |
 
-### 外汇
+### Forex
 
-| 代码 | 说明 |
+| Code | Description |
 | --- | --- |
-| `FOREX` | 外汇市场 |
+| `FOREX` | Foreign exchange market |
 
-> 完整的市场代码、证券类型、K 线周期、复权类型等枚举值，见 `references/reference.md`。
+> For the full list of market codes, security types, KLine periods, and adjustment types, see `references/reference.md`.
 
 ---
 
-## instrument 字段格式
+## instrument Field Format
 
-`instrument` 参数的格式为 `{市场}|{代码}` 或 `{市场}|{代码}|{数据标志}`。
+The `instrument` parameter follows the format `{market}|{symbol}` or `{market}|{symbol}|{flag}`.
 
-| 数据标志 | 说明 |
+| Flag | Description |
 | --- | --- |
-| `R` | 实时行情 |
-| `D` | 延迟行情 |
+| `R` | Real-time quote |
+| `D` | Delayed quote |
 
-**示例：**
+**Examples:**
 
-- `US|AAPL` — 苹果美股
-- `HKEX|00700` — 腾讯港股
-- `HKEX|00700|R` — 腾讯港股实时行情
-- `COMEX|GC2604` — COMEX 黄金期货合约
+- `US|AAPL` — Apple (US market)
+- `HKEX|00700` — Tencent (HK market)
+- `HKEX|00700|R` — Tencent real-time quote
+- `COMEX|GC2604` — COMEX gold futures contract
 
 ---
 
-## 错误处理
+## Error Handling
 
-HTTP 状态码非 `200` 时，响应体格式如下：
+When the HTTP status is not `200`, the response body has this format:
 
 ```json
 {
@@ -180,34 +180,34 @@ HTTP 状态码非 `200` 时，响应体格式如下：
 }
 ```
 
-常见状态码：
+Common HTTP status codes:
 
-| 状态码 | 说明 |
+| Status | Description |
 | --- | --- |
-| `400` | 请求参数有误 |
-| `401` | 认证失败，检查 API Key |
-| `403` | 无权限访问该接口或市场 |
-| `429` | 超出请求频率限制 |
-| `500` | 服务内部错误 |
+| `400` | Invalid request parameters |
+| `401` | Authentication failed — check your API Key |
+| `403` | No permission for this endpoint or market |
+| `429` | Rate limit exceeded |
+| `500` | Internal server error |
 
-业务错误码（响应体内 `code` 字段）：
+Business error codes (the `code` field in the response body):
 
-| 业务码 | 说明 |
+| Code | Description |
 | --- | --- |
-| `0` | 成功 |
-| `1001` | 参数校验失败 |
-| `1002` | 找不到该证券 |
-| `2001` | 无效的 API Key |
-| `2003` | 无接口权限 |
-| `2004` | 无市场权限 |
+| `0` | Success |
+| `1001` | Parameter validation failed |
+| `1002` | Instrument not found |
+| `2001` | Invalid API Key |
+| `2003` | No endpoint permission |
+| `2004` | No market permission |
 
 ---
 
-## 参考文档
+## Reference Docs
 
-| 文档 | 内容 |
+| Document | Contents |
 | --- | --- |
-| [references/openapi.md](references/openapi.md) | 全部接口路径、请求参数说明和示例 |
-| [references/reference.md](references/reference.md) | 枚举值、市场代码、错误码 |
-| [references/response.md](references/response.md) | 各接口响应字段含义 |
-| [references/architecture.md](references/architecture.md) | REST 层架构说明 |
+| [references/openapi.md](references/openapi.md) | All endpoint paths, request parameters, and examples |
+| [references/reference.md](references/reference.md) | Enum values, market codes, and error codes |
+| [references/response.md](references/response.md) | Response field meanings for each endpoint |
+| [references/architecture.md](references/architecture.md) | REST layer architecture overview |
